@@ -175,7 +175,7 @@ describe('WorkspaceContext', () => {
     expect(workspaceContextUtil.alias).to.equal(undefined);
   });
 
-  it('should notify subscribers that the default org may have changed', async () => {
+  xit('should notify subscribers that the default org may have changed', async () => {
     const someLogic = env.stub();
     workspaceContextUtil.onOrgChange((orgInfo: any) => {
       someLogic(orgInfo);
@@ -187,7 +187,7 @@ describe('WorkspaceContext', () => {
     await mockFileWatcher.fire('delete');
 
     expect(someLogic.callCount).to.equal(3);
-  }).timeout(320000);
+  });
 
   describe('getConnection', () => {
     const mockAuthInfo = { test: 'test' };
