@@ -8,6 +8,7 @@
 import { Config, ConfigFile, OrgConfigProperties } from '@salesforce/core';
 import {
   ConfigUtil,
+  getRootWorkspacePath,
   GlobalCliEnvironment
 } from '@salesforce/salesforcedx-utils-vscode';
 import { expect } from 'chai';
@@ -171,8 +172,9 @@ describe('SFDX CLI Configuration utility', () => {
      * 4. The VS Code orgChange event was fired with the correct values
      * 5. The call to ConfigUtil.getDefaultUsernameOrAlias() returns the expected local value
      */
+    // tslint:disable-next-line:only-arrow-functions
     it.only('Should return the locally configured default username when it exists', async function() {
-      this.timeout(320000);
+      // this.timeout(320000);
 
       let res: (value: string) => void;
       let rej: (reason?: any) => void;
@@ -183,9 +185,13 @@ describe('SFDX CLI Configuration utility', () => {
       workspaceContext.onOrgChange(async orgUserInfo => {
         try {
           // Act
+          console.log('calling ConfigUtil.getDefaultUsernameOrAlias()');
+
           const localProjectDefaultUsernameOrAlias = await ConfigUtil.getDefaultUsernameOrAlias();
 
           // Assert
+
+          console.log('asserting!');
           expect(localProjectDefaultUsernameOrAlias).to.equal(
             dummyLocalDefaultUsername
           );
@@ -201,9 +207,17 @@ describe('SFDX CLI Configuration utility', () => {
 
       // Arrange
       // Create a local config file and set the local project default username
+      console.log('cwd: ' + process.cwd());
+      const root = getRootWorkspacePath();
+      console.log('calling process.chdir to change to: ' + root);
+
+      process.chdir(root);
       const config = await Config.create(Config.getDefaultOptions());
       config.set(OrgConfigProperties.TARGET_ORG, dummyLocalDefaultUsername);
+      console.log('calling config.write - process.cwd is: ' + process.cwd());
+
       await config.write();
+      console.log('config written - path is: ' + config.getPath());
 
       return resultPromise;
     });
