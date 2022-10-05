@@ -134,6 +134,7 @@ describe('SFDX CLI Configuration utility', () => {
 
   describe('ConfigAggregator integration tests', () => {
     const dummyLocalDefaultUsername = 'test@local.com';
+    // let config: Config;
 
     afterEach(async () => {
       // Remove the config files that were created for the test
@@ -207,12 +208,10 @@ describe('SFDX CLI Configuration utility', () => {
 
       // Arrange
       // Create a local config file and set the local project default username
-      console.log('cwd: ' + process.cwd());
-      const root = getRootWorkspacePath();
-      console.log('calling process.chdir to change to: ' + root);
-
-      process.chdir(root);
-      const config = await Config.create(Config.getDefaultOptions());
+      const options = Object.assign(Config.getDefaultOptions(), {
+        filePath: '.'
+      });
+      const config = await Config.create(options);
       config.set(OrgConfigProperties.TARGET_ORG, dummyLocalDefaultUsername);
       console.log('calling config.write - process.cwd is: ' + process.cwd());
 
