@@ -220,7 +220,9 @@ describe('SFDX CLI Configuration utility', () => {
 
       console.log('creating sfdx config file');
       const configFile = await ConfigFile.create(
-        Config.getDefaultOptions(false, 'sfdx-config.json')
+        Object.assign(Config.getDefaultOptions(false, 'sfdx-config.json'), {
+          rootFolder: getRootWorkspacePath()
+        })
       );
       console.log('updating sfdx config file');
       configFile.update(
