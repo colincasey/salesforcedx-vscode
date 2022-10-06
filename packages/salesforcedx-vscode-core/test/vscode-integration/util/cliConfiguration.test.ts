@@ -175,7 +175,7 @@ describe('SFDX CLI Configuration utility', () => {
      */
     // tslint:disable-next-line:only-arrow-functions
     it.only('Should return the locally configured default username when it exists', async function() {
-      // this.timeout(320000);
+      this.timeout(320000);
 
       let res: (value: string) => void;
       let rej: (reason?: any) => void;
