@@ -209,7 +209,7 @@ describe('SFDX CLI Configuration utility', () => {
       // Arrange
       // Create a local config file and set the local project default username
       const options = Object.assign(Config.getDefaultOptions(), {
-        filePath: '.'
+        rootFolder: getRootWorkspacePath()
       });
       const config = await Config.create(options);
       config.set(OrgConfigProperties.TARGET_ORG, dummyLocalDefaultUsername);
