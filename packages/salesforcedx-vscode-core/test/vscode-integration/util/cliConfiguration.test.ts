@@ -6,6 +6,7 @@
  */
 
 import { Config, ConfigFile, OrgConfigProperties } from '@salesforce/core';
+import { SfdxConfig } from '@salesforce/core/lib/config/config';
 import {
   ConfigUtil,
   getRootWorkspacePath,
@@ -214,9 +215,20 @@ describe('SFDX CLI Configuration utility', () => {
       const config = await Config.create(options);
       config.set(OrgConfigProperties.TARGET_ORG, dummyLocalDefaultUsername);
       console.log('calling config.write - process.cwd is: ' + process.cwd());
-
       await config.write();
       console.log('config written - path is: ' + config.getPath());
+
+      console.log('creating sfdx config file');
+      const configFile = await ConfigFile.create(
+        Config.getDefaultOptions(false, 'sfdx-config.json')
+      );
+      console.log('updating sfdx config file');
+      configFile.update(
+        OrgConfigProperties.TARGET_ORG,
+        dummyLocalDefaultUsername
+      );
+      console.log('sfdx config file updated');
+      console.log('sfdx config file path is: ' + configFile.getPath());
 
       return resultPromise;
     });
