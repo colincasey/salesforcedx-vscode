@@ -86,16 +86,6 @@ async function metadataDirectory(): Promise<string> {
   return path.join(stateFolder(), 'orgs', String(username), 'metadata');
 }
 
-function apexTestResults(): string {
-  const apexTestResultsFolder = path.join(
-    stateFolder(),
-    'tools',
-    'testresults',
-    'apex'
-  );
-  return apexTestResultsFolder;
-}
-
 function apexLanguageServerDatabase(): string | undefined {
   if (!hasRootWorkspace()) {
     return undefined;
@@ -112,7 +102,23 @@ function debugLogs(): string | undefined {
 export const projectPaths = {
   stateFolder,
   metadataDirectory,
-  apexTestResults,
   apexLanguageServerDatabase,
   debugLogs
 };
+
+export const TOOLS_FOLDER_NAME = 'tools';
+export const TEST_RESULTS_FOLDER_NAME = 'testresults';
+export const APEX_FOLDER_NAME = 'apex';
+
+export class Paths {
+  public static apexTestResultsFolder(): string {
+    const apexTestResultsFolderPath = path.join(
+      getRootWorkspacePath(),
+      Global.STATE_FOLDER,
+      TOOLS_FOLDER_NAME,
+      TEST_RESULTS_FOLDER_NAME,
+      APEX_FOLDER_NAME
+    );
+    return apexTestResultsFolderPath;
+  }
+}
