@@ -106,19 +106,18 @@ export const projectPaths = {
   debugLogs
 };
 
-export const TOOLS_FOLDER_NAME = 'tools';
-export const TEST_RESULTS_FOLDER_NAME = 'testresults';
-export const APEX_FOLDER_NAME = 'apex';
+export const TOOLS_FOLDER = 'tools';
+export const TEST_RESULTS_FOLDER = 'testresults';
+export const APEX_FOLDER = 'apex';
 
 export class Paths {
   public static apexTestResultsFolder(): string {
-    const apexTestResultsFolderPath = path.join(
-      getRootWorkspacePath(),
-      Global.STATE_FOLDER,
-      TOOLS_FOLDER_NAME,
-      TEST_RESULTS_FOLDER_NAME,
-      APEX_FOLDER_NAME
+    const pathToTestResultsFolder = path.join(
+      stateFolder(),
+      TOOLS_FOLDER,
+      TEST_RESULTS_FOLDER,
+      APEX_FOLDER
     );
-    return apexTestResultsFolderPath;
+    return pathToTestResultsFolder;
   }
 }
