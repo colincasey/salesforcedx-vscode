@@ -17,7 +17,7 @@ import {
   workspace,
   workspaceService
 } from '../../../../src/testSupport/workspace';
-import { workspaceUtils } from '@salesforce/salesforcedx-utils-vscode/src';
+import { workspaceUtils } from '@salesforce/salesforcedx-utils-vscode';
 
 describe('getLwcTestRunnerExecutable Unit Tests', () => {
   let existsSyncStub: SinonStub<[fs.PathLike], boolean>;
