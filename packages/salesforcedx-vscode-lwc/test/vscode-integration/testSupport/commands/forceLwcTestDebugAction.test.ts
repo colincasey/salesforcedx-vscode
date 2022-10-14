@@ -5,6 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
+import { getRootWorkspacePath } from '@salesforce/salesforcedx-utils-vscode';
 import { expect } from 'chai';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -51,10 +52,11 @@ describe('Force LWC Test Debug - Code Action', () => {
     ],
     Thenable<any>
   >;
-  let getLwcTestRunnerExecutableStub: SinonStub<
-    [string],
-    fs.PathLike | undefined
-  >;
+  // let getLwcTestRunnerExecutableStub: SinonStub<
+  //   [string],
+  //   fs.PathLike | undefined
+  // >;
+  let getLwcTestRunnerExecutableStub: SinonStub;
   let processHrtimeStub: SinonStub<
     [([number, number] | undefined)?],
     [number, number]
@@ -187,14 +189,14 @@ describe('Force LWC Test Debug - Code Action', () => {
       await forceLwcTestFileDebug({
         testExecutionInfo: mockTestFileInfo
       });
-      const expectedCwd = vscode.workspace.workspaceFolders![0].uri.fsPath;
+      const expectedCwd = getRootWorkspacePath();
       const expectedArgTwo = {
         args: [
           '--',
           '--json',
           '--outputFile',
           path.join(
-            projectPaths.lwcTestResultsFolder(expectedCwd),
+            projectPaths.lwcTestResultsFolder(),
             `test-result-${mockUuid}.json`
           ),
           '--testLocationInResults',
@@ -232,7 +234,7 @@ describe('Force LWC Test Debug - Code Action', () => {
     it('Should debug active text editor test file', async () => {
       mockActiveTextEditorUri(mockTestFileInfo.testUri);
       await forceLwcTestDebugActiveTextEditorTest();
-      const expectedCwd = vscode.workspace.workspaceFolders![0].uri.fsPath;
+      const expectedCwd = getRootWorkspacePath();
       expect(getLwcTestRunnerExecutableStub.getCalls().length).to.equal(1);
       assert.calledWith(debugStub, vscode.workspace.workspaceFolders![0], {
         args: [
@@ -240,7 +242,7 @@ describe('Force LWC Test Debug - Code Action', () => {
           '--json',
           '--outputFile',
           path.join(
-            projectPaths.lwcTestResultsFolder(expectedCwd),
+            projectPaths.lwcTestResultsFolder(),
             `test-result-${mockUuid}.json`
           ),
           '--testLocationInResults',

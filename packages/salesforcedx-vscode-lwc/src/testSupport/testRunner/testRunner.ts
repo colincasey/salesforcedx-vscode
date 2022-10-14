@@ -130,10 +130,7 @@ export class TestRunner {
       const jestExecutionInfo = this.getJestExecutionInfo(workspaceFolder);
       if (jestExecutionInfo) {
         const { jestArgs, jestOutputFilePath } = jestExecutionInfo;
-        const cwd = workspaceFolder.uri.fsPath;
-        const lwcTestRunnerExecutable = workspace.getLwcTestRunnerExecutable(
-          cwd
-        );
+        const lwcTestRunnerExecutable = workspace.getLwcTestRunnerExecutable();
         const cliArgs: string[] = workspace.getCliArgsFromJestArgs(
           jestArgs,
           this.testRunType

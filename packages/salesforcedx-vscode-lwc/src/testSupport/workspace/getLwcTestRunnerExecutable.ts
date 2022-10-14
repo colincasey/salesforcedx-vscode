@@ -4,6 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
+import { getRootWorkspacePath } from '@salesforce/salesforcedx-utils-vscode/src';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as vscode from 'vscode';
@@ -14,10 +15,11 @@ import { workspaceService } from './workspaceService';
 
 /**
  * Get the absolute path to LWC Test runner executable, installed in an SFDX project.
- * @param cwd path to the workspace folder
  * @returns path to LWC Test runner
  */
-export function getLwcTestRunnerExecutable(cwd: string) {
+export function getLwcTestRunnerExecutable(
+  cwd: string = getRootWorkspacePath()
+) {
   const workspaceType = workspaceService.getCurrentWorkspaceType();
   if (workspaceService.isSFDXWorkspace(workspaceType)) {
     const lwcTestRunnerExecutable = path.join(

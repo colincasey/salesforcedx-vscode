@@ -4,6 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
+import { getRootWorkspacePath } from '@salesforce/salesforcedx-utils-vscode';
 import * as path from 'path';
 import { assert, match, SinonStub, stub } from 'sinon';
 import * as uuid from 'uuid';
@@ -102,16 +103,15 @@ describe('Force LWC Test Run - Code Action', () => {
       mockActiveTextEditorUri(mockTestFileInfo.testUri);
       await forceLwcTestRunActiveTextEditorTest();
 
-      const expectedCwd = vscode.workspace.workspaceFolders![0].uri.fsPath;
       const expectedOptions = /^win32/.test(process.platform)
         ? {
             executable: 'cmd.exe',
             shellArgs: ['/d', '/c']
           }
         : undefined;
-      const lwcTestRunnerExecutable = workspace.getLwcTestRunnerExecutable(
-        expectedCwd
-      );
+
+      const lwcTestRunnerExecutable = workspace.getLwcTestRunnerExecutable();
+
       assert.calledOnce(executeTaskStub);
       assert.calledWith(
         executeTaskStub,
@@ -126,13 +126,16 @@ describe('Force LWC Test Run - Code Action', () => {
             '--json',
             '--outputFile',
             path.join(
-              projectPaths.lwcTestResultsFolder(expectedCwd),
+              projectPaths.lwcTestResultsFolder(),
               `test-result-${mockUuid}.json`
             ),
             '--testLocationInResults',
             '--runTestsByPath',
             /^win32/.test(process.platform)
-              ? path.relative(expectedCwd, mockTestFileInfo.testUri.fsPath)
+              ? path.relative(
+                  getRootWorkspacePath(),
+                  mockTestFileInfo.testUri.fsPath
+                )
               : mockTestFileInfo.testUri.fsPath
           ])
         )

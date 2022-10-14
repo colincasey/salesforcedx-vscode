@@ -17,6 +17,7 @@ import {
   workspace,
   workspaceService
 } from '../../../../src/testSupport/workspace';
+import { workspaceUtils } from '@salesforce/salesforcedx-utils-vscode/src';
 
 describe('getLwcTestRunnerExecutable Unit Tests', () => {
   let existsSyncStub: SinonStub<[fs.PathLike], boolean>;
@@ -27,6 +28,8 @@ describe('getLwcTestRunnerExecutable Unit Tests', () => {
   >;
   let telemetryStub: SinonStub<[string, string], void>;
   let getCurrentWorkspaceTypeStub: SinonStub<[], lspCommon.WorkspaceType>;
+  let getRootWorkspacePathStub: SinonStub;
+
   beforeEach(() => {
     existsSyncStub = stub(fs, 'existsSync');
     notificationStub = spy(vscode.window, 'showErrorMessage');
@@ -35,6 +38,7 @@ describe('getLwcTestRunnerExecutable Unit Tests', () => {
       workspaceService,
       'getCurrentWorkspaceType'
     );
+    getRootWorkspacePathStub = stub(workspaceUtils, 'getRootWorkspacePath');
   });
 
   afterEach(() => {
@@ -42,20 +46,21 @@ describe('getLwcTestRunnerExecutable Unit Tests', () => {
     notificationStub.restore();
     telemetryStub.restore();
     getCurrentWorkspaceTypeStub.restore();
+    getRootWorkspacePathStub.restore();
   });
 
   const root = /^win32/.test(process.platform) ? 'C:\\' : '/var';
   describe('SFDX Workspace', () => {
     const sfdxProjectPath = path.join(root, 'project', 'mockSfdxProject');
+
     beforeEach(() => {
       getCurrentWorkspaceTypeStub.returns(lspCommon.WorkspaceType.SFDX);
+      getRootWorkspacePathStub.returns(sfdxProjectPath);
     });
 
     it('Should return LWC Test Runner Path when LWC Test Runner is installed and not display error message', () => {
       existsSyncStub.returns(true);
-      const lwcTestRunnerExecutable = workspace.getLwcTestRunnerExecutable(
-        sfdxProjectPath
-      );
+      const lwcTestRunnerExecutable = workspace.getLwcTestRunnerExecutable();
       expect(lwcTestRunnerExecutable).to.equal(
         path.join(sfdxProjectPath, 'node_modules', '.bin', 'lwc-jest')
       );
@@ -65,7 +70,7 @@ describe('getLwcTestRunnerExecutable Unit Tests', () => {
 
     it('Should display error message when LWC Jest Test Runner is not installed', () => {
       existsSyncStub.returns(false);
-      workspace.getLwcTestRunnerExecutable(sfdxProjectPath);
+      workspace.getLwcTestRunnerExecutable();
       assert.calledOnce(notificationStub);
       // @ts-ignore
       assert.calledWith(
@@ -88,17 +93,17 @@ describe('getLwcTestRunnerExecutable Unit Tests', () => {
       getCurrentWorkspaceTypeStub.returns(lspCommon.WorkspaceType.CORE_PARTIAL);
       whichSyncStub = stub(which, 'sync');
       whichSyncStub.returns(mockLwcTestRunnerPath);
+      getRootWorkspacePathStub.returns(projectPath);
     });
 
     afterEach(() => {
       whichSyncStub.restore();
+      getRootWorkspacePathStub.restore();
     });
 
     it('Should return LWC Test Runner Path when LWC Test Runner is installed and not display error message', () => {
       existsSyncStub.returns(true);
-      const lwcTestRunnerExecutable = workspace.getLwcTestRunnerExecutable(
-        projectPath
-      );
+      const lwcTestRunnerExecutable = workspace.getLwcTestRunnerExecutable();
       expect(lwcTestRunnerExecutable).to.equal(mockLwcTestRunnerPath);
       assert.notCalled(notificationStub);
       assert.notCalled(telemetryStub);
@@ -106,7 +111,7 @@ describe('getLwcTestRunnerExecutable Unit Tests', () => {
 
     it('Should display error message when LWC Jest Test Runner is not installed', () => {
       existsSyncStub.returns(false);
-      workspace.getLwcTestRunnerExecutable(projectPath);
+      workspace.getLwcTestRunnerExecutable();
       assert.calledOnce(notificationStub);
       // @ts-ignore
       assert.calledWith(
@@ -124,9 +129,19 @@ describe('getLwcTestRunnerExecutable Unit Tests', () => {
 
   describe('Unsupported Workspace', () => {
     const projectPath = path.join(root, 'project', 'mockProject');
+
+    beforeEach(() => {
+      getRootWorkspacePathStub.returns(projectPath);
+    });
+
+    afterEach(() => {
+      getRootWorkspacePathStub.restore();
+    });
+
+    getRootWorkspacePathStub.returns(projectPath);
     it('Should send exception in unsupported workspace', () => {
       getCurrentWorkspaceTypeStub.returns(lspCommon.WorkspaceType.UNKNOWN);
-      workspace.getLwcTestRunnerExecutable(projectPath);
+      workspace.getLwcTestRunnerExecutable();
       assert.calledOnce(telemetryStub);
       assert.calledWith(
         telemetryStub,

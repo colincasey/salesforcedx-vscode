@@ -92,6 +92,11 @@ function stateFolder(): string {
     : '';
 }
 
+function toolsFolder(): string {
+  const pathToToolsFolder = path.join(stateFolder(), TOOLS);
+  return pathToToolsFolder;
+}
+
 function metadataFolder(): string {
   const username = WorkspaceContextUtil.getInstance().username;
   const pathToMetadataFolder = path.join(
@@ -103,6 +108,11 @@ function metadataFolder(): string {
   return pathToMetadataFolder;
 }
 
+function testResultsFolder(): string {
+  const pathToTestResultsFolder = path.join(toolsFolder(), TEST_RESULTS);
+  return pathToTestResultsFolder;
+}
+
 function apexTestResultsFolder(): string {
   const pathToApexTestResultsFolder = path.join(
     toolsFolder(),
@@ -112,29 +122,9 @@ function apexTestResultsFolder(): string {
   return pathToApexTestResultsFolder;
 }
 
-function apexLanguageServerDatabase(): string {
-  const pathToApexLangServerDb = path.join(toolsFolder(), APEX_DB);
-  return pathToApexLangServerDb;
-}
-
-function lwcTestResultsFolder(expectedCwd: string): string {
-  // todo: should this use getRootWorkspacePath instead?
-  const pathToLwcTestResultsFolder = path.join(
-    testResultsFolder(expectedCwd),
-    LWC
-  );
+function lwcTestResultsFolder(): string {
+  const pathToLwcTestResultsFolder = path.join(testResultsFolder(), LWC);
   return pathToLwcTestResultsFolder;
-}
-
-function testResultsFolder(vscodePath: string): string {
-  // todo: should this use getRootWorkspacePath instead?
-  const pathToTestResultsFolder = path.join(
-    vscodePath,
-    Global.STATE_FOLDER,
-    TOOLS,
-    TEST_RESULTS
-  );
-  return pathToTestResultsFolder;
 }
 
 function debugLogsFolder(): string {
@@ -142,18 +132,18 @@ function debugLogsFolder(): string {
   return pathToDebugLogsFolder;
 }
 
-function toolsFolder(): string {
-  const pathToToolsFolder = path.join(stateFolder(), TOOLS);
-  return pathToToolsFolder;
+function apexLanguageServerDatabase(): string {
+  const pathToApexLangServerDb = path.join(toolsFolder(), APEX_DB);
+  return pathToApexLangServerDb;
 }
 
 export const projectPaths = {
   stateFolder,
+  toolsFolder,
   metadataFolder,
   testResultsFolder,
   apexTestResultsFolder,
-  apexLanguageServerDatabase,
   debugLogsFolder,
-  toolsFolder,
-  lwcTestResultsFolder
+  lwcTestResultsFolder,
+  apexLanguageServerDatabase
 };
